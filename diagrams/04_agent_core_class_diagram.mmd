@@ -1,0 +1,55 @@
+classDiagram
+    class AuditTrailAgent {
+        -ChatLanguageModel model
+        -ToolRegistry toolRegistry
+        -AuditService auditService
+        -ConversationMemory memory
+        +evaluateLoan(LoanApplication) LoanDecision
+        +processQuery(String query) AgentResponse
+    }
+
+    class ToolRegistry {
+        -Map~String, Tool~ tools
+        +registerTool(Tool tool)
+        +invokeTool(String name, Object[] args) Object
+        +getAvailableTools() List~ToolDescriptor~
+    }
+
+    class AuditInterceptor {
+        -AuditEventRepository repository
+        +intercept(ToolInvocation) Object
+        -logBeforeExecution(ToolInvocation)
+        -logAfterExecution(ToolInvocation, Object result)
+    }
+
+    class AuditService {
+        -AuditEventRepository repository
+        +logReasoningStep(ReasoningStep step)
+        +logToolCall(ToolCallEvent event)
+        +logDecision(DecisionEvent event)
+        +getAuditTrail(String sessionId) List~AuditEvent~
+    }
+
+    class LoanEvaluationTool {
+        &lt;&lt;Tool&gt;&gt;
+        +getCreditScore(String customerId) CreditScore
+        +checkPolicyCompliance(LoanApplication) PolicyResult
+        +verifyKYC(String customerId) KYCResult
+        +calculateRiskScore(LoanApplication) RiskScore
+    }
+
+    class ConversationMemory {
+        -List~ChatMessage~ messages
+        -int maxTokens
+        +addMessage(ChatMessage message)
+        +getMessages() List~ChatMessage~
+        +summarize() String
+    }
+
+    AuditTrailAgent --> ToolRegistry
+    AuditTrailAgent --> AuditService
+    AuditTrailAgent --> ConversationMemory
+    ToolRegistry --> AuditInterceptor
+    ToolRegistry --> LoanEvaluationTool
+    AuditInterceptor --> AuditService
+

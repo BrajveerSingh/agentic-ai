@@ -1,0 +1,42 @@
+graph TB
+    subgraph "External Clients"
+        EXT_LLM[External LLM Clients]
+    end
+
+    subgraph "ATA System"
+        subgraph "MCP Layer"
+            MCP_SERVER[MCP Server<br/>Exposes Tools & Resources]
+            MCP_CLIENT[MCP Client<br/>Consumes External Data]
+        end
+
+        subgraph "A2A Layer"
+            A2A_AGENT[A2A Agent Interface<br/>Multi-Agent Collaboration]
+        end
+
+        subgraph "Core"
+            AGENT[ATA Core Agent]
+            AUDIT[Audit Service]
+        end
+    end
+
+    subgraph "External MCP Servers"
+        CREDIT_MCP[Credit Bureau MCP]
+        KYC_MCP[KYC Provider MCP]
+    end
+
+    subgraph "Partner Agents"
+        RISK_AGENT[Risk Agent]
+        FRAUD_AGENT[Fraud Agent]
+    end
+
+    EXT_LLM -->|MCP Protocol| MCP_SERVER
+    MCP_SERVER --> AGENT
+    MCP_CLIENT --> CREDIT_MCP
+    MCP_CLIENT --> KYC_MCP
+    AGENT --> MCP_CLIENT
+
+    A2A_AGENT <-->|A2A Protocol| RISK_AGENT
+    A2A_AGENT <-->|A2A Protocol| FRAUD_AGENT
+    AGENT --> A2A_AGENT
+
+    AGENT --> AUDIT

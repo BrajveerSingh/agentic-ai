@@ -1,0 +1,71 @@
+erDiagram
+    LOAN_APPLICATION ||--o{ AUDIT_EVENT : generates
+    LOAN_APPLICATION ||--o| LOAN_DECISION : has
+    AUDIT_EVENT ||--o| TOOL_CALL : contains
+    AUDIT_EVENT ||--o| REASONING_STEP : contains
+    USER ||--o{ LOAN_APPLICATION : submits
+    USER ||--o{ AUDIT_EVENT : triggers
+
+    LOAN_APPLICATION {
+        uuid application_id PK
+        uuid customer_id FK
+        decimal amount
+        varchar purpose
+        varchar status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    LOAN_DECISION {
+        uuid decision_id PK
+        uuid application_id FK
+        varchar outcome
+        text reasoning
+        decimal confidence_score
+        timestamp decided_at
+    }
+
+    AUDIT_EVENT {
+        uuid event_id PK
+        uuid session_id
+        uuid application_id FK
+        varchar event_type
+        uuid user_id FK
+        timestamp created_at
+    }
+
+    TOOL_CALL {
+        uuid tool_call_id PK
+        uuid event_id FK
+        varchar tool_name
+        jsonb input_params
+        jsonb output_result
+        bigint execution_time_ms
+        boolean success
+    }
+
+    REASONING_STEP {
+        uuid step_id PK
+        uuid event_id FK
+        int step_number
+        text thought
+        text action
+        text observation
+    }
+
+    USER {
+        uuid user_id PK
+        varchar username
+        varchar role
+        timestamp created_at
+    }
+
+    VECTOR_EMBEDDING {
+        uuid embedding_id PK
+        uuid source_id
+        varchar source_type
+        vector embedding
+        jsonb metadata
+        timestamp created_at
+    }
+

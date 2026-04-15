@@ -1,0 +1,41 @@
+sequenceDiagram
+    autonumber
+    participant Ops as ML Ops Team
+    participant Staging as Staging Env
+    participant Artifact as Artifact Repo
+    participant NFS as Shared Storage
+    participant LB as Load Balancer
+    participant V1 as vLLM Node 1
+    participant V2 as vLLM Node 2
+    participant V3 as vLLM Node 3
+
+    Note over Ops,V3: PHASE 1: Model Preparation
+    Ops->>Staging: Download new model version
+    Staging->>Staging: Run validation tests
+    Staging->>Staging: Security scan
+    Staging->>Artifact: Push to artifact repo
+    Artifact->>NFS: Transfer to prod storage
+
+    Note over Ops,V3: PHASE 2: Rolling Update (Zero Downtime)
+    Ops->>LB: Remove Node 1 from rotation
+    LB-->>V1: Stop sending traffic
+    Ops->>V1: Restart with new model
+    V1->>NFS: Load new model version
+    V1-->>Ops: Health check passed
+    Ops->>LB: Add Node 1 back
+
+    Ops->>LB: Remove Node 2 from rotation
+    LB-->>V2: Stop sending traffic
+    Ops->>V2: Restart with new model
+    V2->>NFS: Load new model version
+    V2-->>Ops: Health check passed
+    Ops->>LB: Add Node 2 back
+
+    Ops->>LB: Remove Node 3 from rotation
+    Ops->>V3: Restart with new model
+    V3->>NFS: Load new model version
+    V3-->>Ops: Health check passed
+    Ops->>LB: Add Node 3 back
+
+    Note over Ops,V3: All nodes updated - Zero downtime achieved
+

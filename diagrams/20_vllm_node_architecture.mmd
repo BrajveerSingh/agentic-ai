@@ -1,0 +1,50 @@
+graph TB
+    subgraph "vLLM Node - Internal Architecture"
+        subgraph "API Layer"
+            API[OpenAI-Compatible API<br/>http://localhost:8000]
+            ENDPOINTS["/v1/chat/completions<br/>/v1/completions<br/>/v1/embeddings"]
+        end
+
+        subgraph "vLLM Engine"
+            SCHED[Continuous Batching<br/>Scheduler]
+            PAGE[PagedAttention<br/>KV Cache Manager]
+            EXEC[Execution Engine]
+        end
+
+        subgraph "Tensor Parallel Workers"
+            W0[Worker 0<br/>GPU 0]
+            W1[Worker 1<br/>GPU 1]
+            W2[Worker 2<br/>GPU 2]
+            W3[Worker 3<br/>GPU 3]
+        end
+
+        subgraph "GPU Memory (4x A100 80GB = 320GB)"
+            GPU0[GPU 0: 80GB<br/>Model Shard 1/4]
+            GPU1[GPU 1: 80GB<br/>Model Shard 2/4]
+            GPU2[GPU 2: 80GB<br/>Model Shard 3/4]
+            GPU3[GPU 3: 80GB<br/>Model Shard 4/4]
+        end
+
+        subgraph "Storage"
+            DISK[(NVMe SSD<br/>Model Weights<br/>Llama 3 70B ~140GB)]
+        end
+    end
+
+    API --> ENDPOINTS
+    ENDPOINTS --> SCHED
+    SCHED --> PAGE
+    PAGE --> EXEC
+    EXEC --> W0
+    EXEC --> W1
+    EXEC --> W2
+    EXEC --> W3
+    W0 --> GPU0
+    W1 --> GPU1
+    W2 --> GPU2
+    W3 --> GPU3
+    DISK -.->|Load on startup| GPU0
+    DISK -.->|Load on startup| GPU1
+    DISK -.->|Load on startup| GPU2
+    DISK -.->|Load on startup| GPU3
+
+

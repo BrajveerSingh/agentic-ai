@@ -1,0 +1,74 @@
+graph TB
+    subgraph "Client Layer"
+        UI[Web UI / API Clients]
+        EXT_LLM[External LLM Clients]
+    end
+
+    subgraph "Application Layer"
+        API[REST API Gateway]
+        AUTH[Authentication & Authorization]
+        MCP_SERVER[MCP Server]
+    end
+
+    subgraph "Agent Core"
+        ORCH[Agent Orchestrator]
+        REASON[Reasoning Engine]
+        TOOLS[Tool Registry]
+        INTERCEPT[Audit Interceptor]
+        A2A[A2A Agent Interface]
+    end
+
+    subgraph "AI Layer"
+        LC4J[LangChain4j Framework]
+        OLLAMA[Ollama Runtime]
+        LLM[Local LLM - Llama 3]
+    end
+
+    subgraph "Integration Layer"
+        MCP_CLIENT[MCP Client]
+    end
+
+    subgraph "Data Layer"
+        JVEC[JVector Engine]
+        PG[(PostgreSQL)]
+        CACHE[In-Memory Cache]
+    end
+
+    subgraph "External MCP Servers"
+        CREDIT[Credit Bureau MCP Server]
+        KYC[KYC Provider MCP Server]
+        POLICY[Policy Repository MCP Server]
+    end
+
+    subgraph "Partner A2A Agents"
+        RISK_AGENT[Risk Assessment Agent]
+        FRAUD_AGENT[Fraud Detection Agent]
+        COMPLY_AGENT[Compliance Agent]
+    end
+
+    UI --> API
+    EXT_LLM -->|MCP Protocol| MCP_SERVER
+    API --> AUTH
+    MCP_SERVER --> AUTH
+    AUTH --> ORCH
+    ORCH --> REASON
+    REASON --> LC4J
+    LC4J --> OLLAMA
+    OLLAMA --> LLM
+    REASON --> TOOLS
+    TOOLS --> INTERCEPT
+    INTERCEPT --> PG
+
+    ORCH --> A2A
+    A2A <-->|A2A Protocol| RISK_AGENT
+    A2A <-->|A2A Protocol| FRAUD_AGENT
+    A2A <-->|A2A Protocol| COMPLY_AGENT
+
+    TOOLS --> MCP_CLIENT
+    MCP_CLIENT -->|MCP Protocol| CREDIT
+    MCP_CLIENT -->|MCP Protocol| KYC
+    MCP_CLIENT -->|MCP Protocol| POLICY
+
+    REASON --> JVEC
+    JVEC --> CACHE
+

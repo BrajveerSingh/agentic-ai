@@ -1,0 +1,42 @@
+graph TB
+    subgraph "Bank VPC - Production LLM Infrastructure"
+        subgraph "Application Tier"
+            ATA1[ATA Instance 1]
+            ATA2[ATA Instance 2]
+            ATA3[ATA Instance N]
+        end
+
+        subgraph "LLM Gateway"
+            KONG[Kong / Envoy<br/>Rate Limiting<br/>Circuit Breaker<br/>Health Checks]
+        end
+
+        subgraph "vLLM Cluster - Primary"
+            VLLM_P1[vLLM Primary 1<br/>Llama 3 70B<br/>4x A100 80GB]
+            VLLM_P2[vLLM Primary 2<br/>Llama 3 70B<br/>4x A100 80GB]
+        end
+
+        subgraph "vLLM Cluster - Fallback"
+            VLLM_F1[vLLM Fallback<br/>Llama 3 8B<br/>1x A100 40GB]
+        end
+
+        subgraph "Monitoring Stack"
+            PROM[Prometheus<br/>Metrics Collection]
+            GRAF[Grafana<br/>Dashboards]
+            ALERT[AlertManager<br/>On-Call Alerts]
+        end
+    end
+
+    ATA1 --> KONG
+    ATA2 --> KONG
+    ATA3 --> KONG
+
+    KONG -->|Primary Route| VLLM_P1
+    KONG -->|Primary Route| VLLM_P2
+    KONG -->|Fallback Route| VLLM_F1
+
+    VLLM_P1 --> PROM
+    VLLM_P2 --> PROM
+    VLLM_F1 --> PROM
+    PROM --> GRAF
+    PROM --> ALERT
+

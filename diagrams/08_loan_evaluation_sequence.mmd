@@ -1,0 +1,48 @@
+sequenceDiagram
+    autonumber
+    participant Client
+    participant API as REST API
+    participant Service as LoanService
+    participant Agent as ATA Agent
+    participant Audit as AuditInterceptor
+    participant Tools as Tool Registry
+    participant LLM as Ollama/Llama3
+    participant DB as PostgreSQL
+
+    Client->>API: POST /api/loans/evaluate
+    API->>Service: processApplication(loanRequest)
+    Service->>Agent: evaluateLoan(application)
+
+    Agent->>Audit: logSessionStart(sessionId)
+    Audit->>DB: INSERT audit_event
+
+    loop Reasoning Loop
+        Agent->>LLM: generateNextStep(context)
+        LLM-->>Agent: {thought, action, tool_call}
+
+        Agent->>Audit: logReasoningStep(step)
+        Audit->>DB: INSERT reasoning_step
+
+        alt Tool Call Required
+            Agent->>Tools: invokeTool(name, params)
+            Tools->>Audit: interceptBefore(invocation)
+            Audit->>DB: INSERT tool_call (pending)
+
+            Tools->>Tools: executeToolMethod()
+
+            Tools->>Audit: interceptAfter(result)
+            Audit->>DB: UPDATE tool_call (complete)
+            Tools-->>Agent: toolResult
+        end
+
+        Agent->>LLM: generateObservation(result)
+        LLM-->>Agent: observation
+    end
+
+    Agent->>Audit: logDecision(decision)
+    Audit->>DB: INSERT loan_decision
+
+    Agent-->>Service: LoanDecision
+    Service-->>API: ResponseEntity
+    API-->>Client: 200 OK {decision, auditTrailId}
+

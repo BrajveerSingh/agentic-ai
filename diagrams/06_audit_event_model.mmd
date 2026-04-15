@@ -1,0 +1,44 @@
+classDiagram
+    class AuditEvent {
+        &lt;&lt;abstract&gt;&gt;
+        -String eventId
+        -String sessionId
+        -String applicationId
+        -LocalDateTime timestamp
+        -String userId
+        +getEventType() String
+    }
+
+    class ReasoningStepEvent {
+        -int stepNumber
+        -String thought
+        -String action
+        -String observation
+    }
+
+    class ToolCallEvent {
+        -String toolName
+        -String inputJson
+        -String outputJson
+        -long executionTimeMs
+        -boolean success
+    }
+
+    class DecisionEvent {
+        -DecisionOutcome outcome
+        -String finalReasoning
+        -List~String~ supportingEvidence
+        -double confidenceScore
+    }
+
+    class ErrorEvent {
+        -String errorType
+        -String errorMessage
+        -String stackTrace
+    }
+
+    AuditEvent <|-- ReasoningStepEvent
+    AuditEvent <|-- ToolCallEvent
+    AuditEvent <|-- DecisionEvent
+    AuditEvent <|-- ErrorEvent
+

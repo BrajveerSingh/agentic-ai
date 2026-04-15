@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/atadb
+    username: ata
+    password: ata_dev_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+# Ollama LLM - use Docker service DNS name
+# First inference may take 2-3+ minutes while model loads into memory
+ollama:
+  base-url: http://ollama:11434
+  model: llama3:8b
+  timeout: 300
+
+# In compose, use service DNS names
+
+a2a:
+  client:
+    risk-agent:
+      url: http://risk-agent:8080/mock/risk-agent/tasks/send
+    fraud-agent:
+      url: http://fraud-agent:8080/mock/fraud-agent/tasks/send
+
+mcp:
+  client:
+    credit-bureau:
+      url: http://credit-bureau-mcp:8080/mock/credit-bureau-mcp/message
+
