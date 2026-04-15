@@ -1,6 +1,12 @@
+# agentic-ai
+
+This repository contains proof of concepts for A2A, MCP, LangChain4j and complete agentic app setup.
+
+---
+
 # Audit Trail Agent (ATA)
 
-[![CI Pipeline](https://github.com/bank/audit-trail-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/bank/audit-trail-agent/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/BrajveerSingh/agentic-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/BrajveerSingh/agentic-ai/actions/workflows/ci.yml)
 [![Java Version](https://img.shields.io/badge/Java-25_LTS-blue.svg)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.5-green.svg)](https://spring.io/projects/spring-boot)
 [![Phase](https://img.shields.io/badge/Phase-3%20MCP-brightgreen.svg)](#phase-status)
@@ -600,11 +606,22 @@ See [Architecture Documentation](audit_trail_agent_architecture.md), [Distribute
 | Protocols | MCP (Phase 3 ✅), A2A (Phase 4) |
 | Observability | Prometheus, Grafana |
 
-## License
+## ⚠️ License & Usage Restrictions
 
-Proprietary - Internal Use Only
+This project is published for **viewing purposes only**.
+
+| Action | Allowed? |
+|--------|----------|
+| View / read the code on GitHub | ✅ Yes |
+| Fork on GitHub (to submit a pull request) | ✅ Yes |
+| Clone, download, or copy the code locally | ❌ No |
+| Use any part of the code in another project | ❌ No |
+| Distribute or republish the code | ❌ No |
+
+All rights are reserved by the repository owner. See the [LICENSE](LICENSE) file for full terms.
+If you need special permission, please open an issue or contact the owner via GitHub.
 
 ## Support
 
-Contact the AI Platform Team: ai-platform@bank.internal
+Contact the AI Platform Team via GitHub issues.
 
