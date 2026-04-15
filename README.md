@@ -623,5 +623,5 @@ If you need special permission, please open an issue or contact the owner via Gi
 
 ## Support
 
-Contact the AI Platform Team via GitHub issues.
+Contact the AI Platform Team via GitHub issues. If you need access to the code then you can create an issue in this repository to get access to code whih is available here: https://github.com/BrajveerSingh/audit-trail-agent
 
